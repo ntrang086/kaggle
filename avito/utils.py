@@ -2,17 +2,11 @@ from zipfile import ZipFile
 import os
 import math
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from PIL import Image
 import imghdr
-
 from keras.preprocessing import image
-import keras.applications.resnet50 as resnet50
-import keras.applications.xception as xception
-import keras.applications.inception_v3 as inception_v3
 
-
+################################# Image Processing ################################
 def get_index_ranges(total_rows, rows_per_step=5000):
     """Get the ranges of row indices as a list of tuples. Each tuple contains
     the start and end row indices for a step.
@@ -53,3 +47,20 @@ def image_classify(model, model_class, image_name, images_path, top_n=1):
     preds = model.predict(x)
     # Return the prediction score only
     return model_class.decode_predictions(preds, top=top_n)[0][0][2]
+
+################################# Text Processing ################################
+from pymystem3 import Mystem
+from nltk.corpus import stopwords 
+stop_words = set(stopwords.words('russian'))
+lemmatizer = Mystem()
+
+def pre_process(text):
+    """Clean and lemmatize text."""
+    try:
+        processed_text = text.lower()
+        processed_text = lemmatizer.lemmatize(processed_text)
+        processed_text = " ".join(processed_text)
+        return processed_text
+    except: 
+        return "text error"
+
